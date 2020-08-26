@@ -1,0 +1,10 @@
+#!/bin/bash
+cd ./.temp-icons
+
+all="$(find . -depth)"
+
+for f in ${all}; do
+   mv "$f" "$( tr '[:upper:]' '[:lower:]' <<<"$f" )"
+done
+
+exit 0

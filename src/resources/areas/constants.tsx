@@ -1,0 +1,9 @@
+// Список зон доставок
+export const AREAS_AREAS_FETCH = 'AREAS_AREAS_FETCH';
+export const AREAS_AREAS_SUCCESS = 'AREAS_AREAS_SUCCESS';
+export const AREAS_AREAS_FAIL = 'AREAS_AREAS_FAIL';
+
+// Применить выбранные зоны доставки
+export const AREAS_AREAS_APPLY_FETCH = 'AREAS_AREAS_APPLY_FETCH';
+export const AREAS_AREAS_APPLY_SUCCESS = 'AREAS_AREAS_APPLY_SUCCESS';
+export const AREAS_AREAS_APPLY_FAIL = 'AREAS_AREAS_APPLY_FAIL';

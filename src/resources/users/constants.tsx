@@ -1,0 +1,54 @@
+// Отправка смс кода
+export const USERS_AUTH_SMS_SEND_FETCH = 'USERS_AUTH_SMS_SEND_FETCH';
+export const USERS_AUTH_SMS_SEND_SUCCESS = 'USERS_AUTH_SMS_SEND_SUCCESS';
+export const USERS_AUTH_SMS_SEND_FAIL = 'USERS_AUTH_SMS_SEND_FAIL';
+
+// Вход по номеру телефона
+export const USERS_AUTH_PHONE_FETCH = 'USERS_AUTH_PHONE_FETCH';
+export const USERS_AUTH_PHONE_SUCCESS = 'USERS_AUTH_PHONE_SUCCESS';
+export const USERS_AUTH_PHONE_FAIL = 'USERS_AUTH_PHONE_FAIL';
+
+// Вход
+export const USERS_AUTH_LOGIN_FETCH = 'USERS_AUTH_LOGIN_FETCH';
+export const USERS_AUTH_LOGIN_SUCCESS = 'USERS_AUTH_LOGIN_SUCCESS';
+export const USERS_AUTH_LOGIN_FAIL = 'USERS_AUTH_LOGIN_FAIL';
+
+// Выход из аккаунта
+export const USERS_AUTH_LOGOUT_FETCH = 'USERS_AUTH_LOGOUT_FETCH';
+export const USERS_AUTH_LOGOUT_SUCCESS = 'USERS_AUTH_LOGOUT_SUCCESS';
+export const USERS_AUTH_LOGOUT_FAIL = 'USERS_AUTH_LOGOUT_FAIL';
+
+// Профиль
+export const USERS_PROFILE_FETCH = 'USERS_PROFILE_FETCH';
+export const USERS_PROFILE_SUCCESS = 'USERS_PROFILE_SUCCESS';
+export const USERS_PROFILE_FAIL = 'USERS_PROFILE_FAIL';
+
+// Выход со всех устройств
+export const USERS_REVOKE_FETCH = 'USERS_REVOKE_FETCH';
+export const USERS_REVOKE_SUCCESS = 'USERS_REVOKE_SUCCESS';
+export const USERS_REVOKE_FAIL = 'USERS_REVOKE_FAIL';
+
+// Настройки
+export const USERS_OPTIONS_FETCH = 'USERS_OPTIONS_FETCH';
+export const USERS_OPTIONS_SUCCESS = 'USERS_OPTIONS_SUCCESS';
+export const USERS_OPTIONS_FAIL = 'USERS_OPTIONS_FAIL';
+
+// Восстановление ID профиля из хранилища
+export const USERS_LOCAL_DATA_SET = 'USERS_LOCAL_DATA_SET';
+
+// Изменить тип входа
+export const USERS_LOGIN_TYPE_SET = 'USERS_LOGIN_TYPE_SET';
+
+// Сохранение push настройки
+export const USERS_PUSH_SET = 'USERS_PUSH_SET';
+
+// Включить телефонию
+export const USERS_ATS_ENABLE = 'USERS_ATS_ENABLE';
+
+// Выключить телефонию
+export const USERS_ATS_DISABLE = 'USERS_ATS_DISABLE';
+
+// Обновление профиля
+export const USERS_USER_UPDATE_FETCH = 'USERS_USER_UPDATE_FETCH';
+export const USERS_USER_UPDATE_SUCCESS = 'USERS_USER_UPDATE_SUCCESS';
+export const USERS_USER_UPDATE_FAIL = 'USERS_USER_UPDATE_FAIL';
