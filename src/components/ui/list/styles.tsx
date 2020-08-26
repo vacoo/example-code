@@ -48,7 +48,7 @@ export default StyleSheet.create<{ [key: string]: ViewStyle | TextStyle | ImageS
     },
     help: {
         paddingVertical: 20,
-        paddingHorizontal: 15,
+        paddingHorizontal: 10,
     },
     help_text: {
         fontSize: 14,

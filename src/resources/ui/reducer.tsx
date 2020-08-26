@@ -1,8 +1,5 @@
 import { Action } from 'redux';
 import * as Const from '@resources/ui/constants';
-import * as ConstOrders from '@resources/orders/constants';
-import * as ApiOrders from '@resources/orders/api';
-import * as ActionsOrders from '@resources/orders/actions';
 import { State, initialState } from '@resources/ui/_state';
 import { MenuContextOpen } from '@resources/ui/actions';
 import { Alert } from 'react-native';
@@ -58,42 +55,8 @@ function getName(action: string): string {
     return '';
 }
 
-// Состояние загрузки заказов
-function orderActionFetch(state: State, action: ActionsOrders.OrderActionFetch): State {
-    return {
-        ...state,
-        ordersIDsReq: [...state.ordersIDsReq, action.order.id],
-    };
-}
-
-// Убирает состояние загрузки заказа при неудаче
-function orderActionDone(state: State, action: ApiOrders.OrderActionDone): State {
-    return {
-        ...state,
-        ordersIDsReq: state.ordersIDsReq.filter((id) => id !== action.orderID),
-    };
-}
-
 export const reducerUI = (state: State = initialState, action: any): State => {
     const { type } = action;
-
-    switch (action.type) {
-        case ConstOrders.ORDERS_ORDER_ACCEPT_FETCH:
-        case ConstOrders.ORDERS_ORDER_IN_WAY_FETCH:
-        case ConstOrders.ORDERS_ORDER_COMPLETE_FETCH:
-        case ConstOrders.ORDERS_ORDER_CANCEL_FETCH:
-            return orderActionFetch(state, action);
-
-        case ConstOrders.ORDERS_ORDER_ACCEPT_SUCCESS:
-        case ConstOrders.ORDERS_ORDER_IN_WAY_SUCCESS:
-        case ConstOrders.ORDERS_ORDER_COMPLETE_SUCCESS:
-        case ConstOrders.ORDERS_ORDER_CANCEL_SUCCESS:
-        case ConstOrders.ORDERS_ORDER_ACCEPT_FAIL:
-        case ConstOrders.ORDERS_ORDER_IN_WAY_FAIL:
-        case ConstOrders.ORDERS_ORDER_COMPLETE_FAIL:
-        case ConstOrders.ORDERS_ORDER_CANCEL_FAIL:
-            return orderActionDone(state, action);
-    }
 
     if (type.match(P_FETCH)) {
         return loading(state, getNamespace(type), getName(type), true);

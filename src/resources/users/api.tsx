@@ -1,12 +1,7 @@
-import { call, put, takeEvery, select, all, take, fork } from 'redux-saga/effects';
+import { call, put, takeEvery, select, all } from 'redux-saga/effects';
 import { Action } from 'redux';
-import { eventChannel, END } from 'redux-saga';
 import AsyncStorage from '@react-native-community/async-storage';
 import OneSignal from 'react-native-onesignal';
-import RNCallDetection from 'react-native-call-detection';
-import { PermissionsAndroid, BackHandler, Alert } from 'react-native';
-import KeepAwake from 'react-native-keep-awake';
-import BackgroundService from 'react-native-background-actions';
 
 import * as Const from '@resources/users/constants';
 import * as Actions from '@resources/users/actions';
@@ -15,12 +10,8 @@ import * as Request from '@resources/utils/request';
 import * as Toast from '@resources/utils/toast';
 import { User, USER_ROLE } from '@resources/users/_user';
 import { Options } from '@resources/users/_options';
-import { supplier } from '@resources/suppliers/actions';
 import { getPush } from '@resources/users/selectors';
-import { Platform } from 'react-native';
 import { setTimezone } from '@resources/utils/time';
-import { CallEvent, initialCallEvent, CALL_STATUS } from './_call-event';
-import { getWebsocketURL } from '@resources/websocket/_types';
 
 // Отправка смс кода
 export interface AuthSmsSendSuccess {
@@ -65,9 +56,7 @@ function* authPhone(action: Action & Actions.AuthPhoneFetch) {
 
         yield put(success);
 
-        yield fork(connectWebsocket);
         yield _setTimezone(success.user);
-        yield put(supplier({ supplier_id: success.user.supplier_id }));
 
         yield _setOneSignalData(success.user);
     } catch (e) {
@@ -93,9 +82,6 @@ function* authLogin(action: Actions.AuthLoginFetch & Action) {
 
         yield put(success);
 
-        yield put(supplier({ supplier_id: success.user.supplier_id }));
-
-        yield fork(connectWebsocket);
         yield _setTimezone(success.user);
         yield _setOneSignalData(success.user);
     } catch (e) {
@@ -131,7 +117,6 @@ export function* _reqProfileGet() {
         user: res.content.user,
     };
     yield put(success);
-    yield put(supplier({ supplier_id: success.user.supplier_id }));
 
     yield _setTimezone(success.user);
     yield _saveProfileID(success.user.id, success.user.role);
@@ -286,107 +271,9 @@ function* pushSet(action: Action & Actions.PushSet) {
     }
 }
 
-// Обработка события звонка
-export function* callEvent() {
-    const channel = eventChannel((emit) => {
-        new RNCallDetection(
-            (rawStatus: string, phone: string) => {
-                const status = rawStatus.toLocaleLowerCase() as CALL_STATUS;
-                let callEvent: CallEvent = {
-                    ...initialCallEvent,
-                    status: status,
-                    phone: phone,
-                };
-                emit(ActionsWebsocket.send(callEvent));
-            },
-            true,
-            () => {},
-            {
-                title: 'Разрешение доступ к состоянию телефона',
-                message:
-                    'Приложение нуждается в доступе к состоянию вашего телефона для передачи номера входящего звонка в CRM',
-            },
-        );
-        return () => {};
-    });
-
-    while (true) {
-        const action = yield take(channel);
-        const isAts = yield AsyncStorage.getItem('ats');
-        if (isAts) {
-            yield put(action);
-        }
-    }
-}
-
-// Запрос разрешений и запуск телефонии
-function* _ats() {
-    try {
-        if (Platform.OS === 'android') {
-            KeepAwake.activate(); // Держим экран включенным
-
-            const role: USER_ROLE = yield AsyncStorage.getItem('profile_role');
-            const isAts = yield AsyncStorage.getItem('ats');
-
-            if (isAts && role === USER_ROLE.MANAGER) {
-                yield PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_PHONE_STATE);
-                yield PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_CALL_LOG);
-                yield call(callEvent);
-            }
-        }
-    } catch (e) {
-        Toast.showError(e.message);
-    }
-}
-
-// Включить телефонию
-function* atsEnable() {
-    if (Platform.OS === 'android') {
-        yield AsyncStorage.setItem('ats', '1');
-        yield _ats();
-    }
-}
-
-// Выключить телефонию
-function* atsDisable() {
-    yield AsyncStorage.removeItem('ats');
-}
-
-// Подключение к вебсокету с токеном
-function* connectWebsocket() {
-    const accessToken = yield AsyncStorage.getItem('access_token');
-    yield put(ActionsWebsocket.connect(getWebsocketURL() + '?access_token=' + accessToken));
-}
-
-async function veryIntensiveTask({ delay }: { delay: number }) {
-    await new Promise((resolve) => {
-        console.log(delay);
-        // for (let i = 0; BackgroundService.isRunning(); i++) {
-        //     console.log(i);
-        // }
-    });
-}
-
-function* serviceStart() {
-    yield BackgroundService.stop();
-    yield BackgroundService.start(veryIntensiveTask, {
-        taskName: 'call',
-        taskTitle: 'Телефония включена',
-        taskDesc: 'Передача событий звонков в Vodopad CRM',
-        taskIcon: {
-            name: 'ic_launcher',
-            type: 'mipmap',
-        },
-        color: '#206FE5',
-        parameters: {
-            delay: 1000,
-        },
-    });
-}
 
 export function* apiUsers() {
     yield call(_restoreLocalData);
-    yield fork(_ats);
 
     yield takeEvery(Const.USERS_AUTH_SMS_SEND_FETCH, authSmsSend);
     yield takeEvery(Const.USERS_AUTH_PHONE_FETCH, authPhone);
@@ -396,12 +283,7 @@ export function* apiUsers() {
     yield takeEvery(Const.USERS_REVOKE_FETCH, revoke);
     yield takeEvery(Const.USERS_OPTIONS_FETCH, settings);
     yield takeEvery(Const.USERS_PUSH_SET, pushSet);
-    yield takeEvery(Const.USERS_ATS_ENABLE, atsEnable);
-    yield takeEvery(Const.USERS_ATS_DISABLE, atsDisable);
     yield takeEvery(Const.USERS_USER_UPDATE_FETCH, userUpdate);
-    yield takeEvery(Const.USERS_SERVICE_START, serviceStart);
 
-    yield call(serviceStart);
-
-    yield all([put(Actions.options()), put(Actions.profile()), fork(connectWebsocket)]);
+    yield all([put(Actions.options()), put(Actions.profile())]);
 }

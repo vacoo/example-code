@@ -5,8 +5,6 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
 import RNBootSplash from 'react-native-bootsplash';
 import FlashMessage from 'react-native-flash-message';
-import { ONE_SIGNAL_APP_ID } from 'react-native-dotenv';
-import OneSignal from 'react-native-onesignal';
 
 import * as COLORS from '@components/ui/colors';
 
@@ -36,18 +34,6 @@ export default class Root extends React.Component {
         RNBootSplash.hide({ duration: 0 });
     }
 
-    componentDidMount() {
-        OneSignal.init(ONE_SIGNAL_APP_ID, {
-            kOSSettingsKeyAutoPrompt: true,
-            kOSSettingsKeyInFocusDisplayOption: 2,
-            kOSSettingsKeyInAppLaunchURL: false,
-            kOSSSettingsKeyPromptBeforeOpeningPushURL: false,
-        });
-        OneSignal.inFocusDisplaying(2);
-
-        OneSignal.clearOneSignalNotifications();
-    }
-
     render() {
         return (
             <Provider store={store}>
@@ -56,7 +42,7 @@ export default class Root extends React.Component {
                     <NavigationContainer>
                         <MainStacks />
                     </NavigationContainer>
-                    <FlashMessage position="top" animationDuration={150} />
+                    <FlashMessage position="bottom" animationDuration={150} />
                 </SafeAreaProvider>
             </Provider>
         );

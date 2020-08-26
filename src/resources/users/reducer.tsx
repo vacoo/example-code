@@ -2,7 +2,6 @@ import { State, initialState } from '@resources/users/_state';
 import * as Const from '@resources/users/constants';
 import * as Api from '@resources/users/api';
 import * as Actions from '@resources/users/actions';
-import * as ConstNotices from '@resources/notices/constants';
 import { initialUser } from '@resources/users/_user';
 import { initialOptions } from '@resources/users/_options';
 
@@ -140,9 +139,6 @@ export const reducerUsers = (state: State = initialState, action: any) => {
 
         case Const.USERS_PUSH_SET:
             return pushSet(state, action);
-
-        case ConstNotices.NOTICES_NOTICES_READED_SUCCESS:
-            return noticesReaded(state);
 
         case Const.USERS_USER_UPDATE_SUCCESS:
             return userUpdate(state, action);
