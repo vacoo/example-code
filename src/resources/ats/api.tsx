@@ -1,18 +1,18 @@
-import { takeEvery, select, put, delay, call, take } from 'redux-saga/effects';
+import { takeEvery, select, put, delay, call, take, fork } from 'redux-saga/effects';
 import { Action } from 'redux';
 import AsyncStorage from '@react-native-community/async-storage';
 import BackgroundService from 'react-native-background-actions';
 import RNCallDetection from 'react-native-call-detection';
-import { PermissionsAndroid, BackHandler, Alert, Platform } from 'react-native';
-import KeepAwake from 'react-native-keep-awake';
-import { eventChannel, END } from 'redux-saga';
+import { PermissionsAndroid, Alert } from 'react-native';
+import { eventChannel } from 'redux-saga';
+import NetInfo from '@react-native-community/netinfo';
+import * as Request from '@resources/utils/request';
 
 import * as Const from '@resources/ats/constants';
 import * as Actions from '@resources/ats/actions';
 import { getStatus } from '@resources/ats/selectors';
 import { Status } from '@resources/ats/_state';
-import { EventCall, CALL_STATUS, initialEventCall } from '@resources/ats/_event-call';
-import { USER_ROLE } from '@resources/users/_user';
+import { CALL_STATUS } from '@resources/ats/_event-call';
 import * as Toast from '@resources/utils/toast';
 
 // Включить/выключить
@@ -20,22 +20,38 @@ function* toogle(action: Action & Actions.Toogle) {
     let status: Status = yield select(getStatus);
 
     if (action.enable) {
-        yield delay(1000);
-        yield put(
-            Actions.statusSet({
-                status: {
-                    ...status,
-                    isEnabled: true,
-                    isWiFi: true,
-                    isPermissions: true,
-                },
-            }),
-        );
+        if (!status.isPermissions) {
+            Alert.alert('Статус', 'Предоставьте разрашения на чтение телефонных вызовов');
+
+            yield put(
+                Actions.statusSet({
+                    status: {
+                        ...status,
+                        isEnabled: false,
+                    },
+                }),
+            );
+        } else if (!status.isWiFi) {
+            Alert.alert('Статус', 'Подключитесь к WI-FI точке');
+            yield put(
+                Actions.statusSet({
+                    status: {
+                        ...status,
+                        isEnabled: false,
+                    },
+                }),
+            );
+        } else {
+            yield start();
+        }
+    } else {
+        yield BackgroundService.stop();
     }
 
     yield AsyncStorage.setItem('enable', String(action.enable ? 1 : 0));
 }
 
+// Восстановление состояния
 function* restore() {
     try {
         let status: Status = yield select(getStatus);
@@ -50,88 +66,52 @@ function* restore() {
                 },
             }),
         );
+
+        if (enable) {
+            yield start();
+        }
     } catch (e) {
         console.error(e);
     }
 }
 
-async function veryIntensiveTask({ delay }: { delay: number }) {
-    await new Promise((resolve) => {
-        console.log(delay);
-        // for (let i = 0; BackgroundService.isRunning(); i++) {
-        //     console.log(i);
-        // }
-    });
-}
+const PERM_TITLE = 'Разрешение доступ к состоянию телефона';
+const PERM_MESSAGE =
+    'Приложение нуждается в доступе к состоянию вашего телефона для передачи номера входящего звонка в CRM';
 
-// Обработка события звонка
-export function* callEvent() {
-    const channel = eventChannel((emit: any) => {
+// Слушатель событий звонка
+async function listen() {
+    await new Promise(() => {
         new RNCallDetection(
             (rawStatus: string, phone: string) => {
-                const status = rawStatus.toLocaleLowerCase() as CALL_STATUS;
-                let eventCall: EventCall = {
-                    ...initialEventCall,
-                    status: status,
-                    phone: phone,
-                };
+                if (BackgroundService.isRunning()) {
+                    // Отправка события
+                    const status = rawStatus.toLocaleLowerCase() as CALL_STATUS;
+                    Request.post('/v1/event-call', {
+                        status: status,
+                        phone: phone,
+                    })
+                        .then((res) => {
+                            console.log(res);
+                        })
+                        .catch((e) => {
+                            console.error(e);
+                        });
+                }
             },
             true,
             () => {},
             {
-                title: 'Разрешение доступ к состоянию телефона',
-                message:
-                    'Приложение нуждается в доступе к состоянию вашего телефона для передачи номера входящего звонка в CRM',
+                title: PERM_TITLE,
+                message: PERM_MESSAGE,
             },
         );
-        return () => {};
     });
-
-    while (true) {
-        const action = yield take(channel);
-        const isAts = yield AsyncStorage.getItem('ats');
-        if (isAts) {
-            yield put(action);
-        }
-    }
 }
 
-// Запрос разрешений и запуск телефонии
-function* _ats() {
-    try {
-        if (Platform.OS === 'android') {
-            KeepAwake.activate(); // Держим экран включенным
-
-            const role: USER_ROLE = yield AsyncStorage.getItem('profile_role');
-            const isAts = yield AsyncStorage.getItem('ats');
-
-            if (isAts && role === USER_ROLE.MANAGER) {
-                yield PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_PHONE_STATE);
-                yield PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_CALL_LOG);
-                yield call(callEvent);
-            }
-        }
-    } catch (e) {
-        Toast.showError(e.message);
-    }
-}
-
-// Включить телефонию
-function* atsEnable() {
-    if (Platform.OS === 'android') {
-        yield AsyncStorage.setItem('ats', '1');
-        yield _ats();
-    }
-}
-
-// Выключить телефонию
-function* atsDisable() {
-    yield AsyncStorage.removeItem('ats');
-}
-
-function* init() {
+function* start() {
     yield BackgroundService.stop();
-    yield BackgroundService.start(veryIntensiveTask, {
+    yield BackgroundService.start(listen, {
         taskName: 'call',
         taskTitle: 'Телефония включена',
         taskDesc: 'Передача событий звонков в Vodopad CRM',
@@ -146,13 +126,76 @@ function* init() {
     });
 }
 
-function* eventCallSend() {
-    Toast.showSuccess("Событие отправлено")
+// Проверка WIFI подключения
+function* checkWiFi() {
+    const channel = eventChannel((emit: any) => {
+        NetInfo.addEventListener((state) => {
+            emit(state.isConnected);
+        });
+        return () => {};
+    });
+
+    while (true) {
+        let connected: boolean = yield take(channel);
+        let status: Status = yield select(getStatus);
+
+        yield put(
+            Actions.statusSet({
+                status: {
+                    ...status,
+                    isWiFi: connected,
+                },
+            }),
+        );
+    }
+}
+
+// Проверка разрешений
+function* checkPermissions() {
+    while (true) {
+        let readPhoneState: boolean = yield PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_PHONE_STATE);
+        let readCallLog: boolean = yield PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_CALL_LOG);
+
+        let status: Status = yield select(getStatus);
+
+        yield put(
+            Actions.statusSet({
+                status: {
+                    ...status,
+                    isPermissions: readPhoneState && readCallLog,
+                },
+            }),
+        );
+
+        yield delay(5000);
+    }
+}
+
+// Запрос разрешений
+function* permissionsRequest() {
+    yield PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_PHONE_STATE);
+    yield PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_CALL_LOG);
+}
+
+// Отправка события звонка
+function* eventCallSend(action: Action & Actions.EventCallSend) {
+    try {
+        let res = yield call(Request.post, '/v1/event-call', {
+            status: action.eventCall.status,
+            phone: action.eventCall.phone,
+        });
+        Toast.showSuccess('Ответ от сервера', res.msg);
+    } catch (e) {
+        Toast.showError('Не удалось отправть', e.message);
+    }
 }
 
 export function* apiAts() {
     yield call(restore);
+    yield fork(checkWiFi);
+    yield fork(checkPermissions);
 
     yield takeEvery(Const.ATS_TOOGLE, toogle);
-    yield takeEvery(Const.ATS_EVENT_CALL_SEND, eventCallSend)
+    yield takeEvery(Const.ATS_EVENT_CALL_SEND, eventCallSend);
+    yield takeEvery(Const.ATS_PERMISSIONS_REQUEST, permissionsRequest);
 }

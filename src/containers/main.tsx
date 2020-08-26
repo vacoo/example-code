@@ -1,5 +1,5 @@
 import React from 'react';
-import { FlatList } from 'react-native';
+import { FlatList, Alert } from 'react-native';
 import { connect, useDispatch } from 'react-redux';
 
 import { Wrapper } from '@components/wrapper';
@@ -18,7 +18,7 @@ import { formatPhone } from '@resources/utils';
 import { ListEmpty } from '@components/list-empty';
 import { ModalOK } from '@components/modal-ok';
 import { getStatus, getCalls } from '@resources/ats/selectors';
-import { toogle, eventCallSend } from '@resources/ats/actions';
+import { toogle, eventCallSend, permissionsRequest } from '@resources/ats/actions';
 import { Status } from '@resources/ats/_state';
 import { EventCall, CALL_STATUS_LABEL, initialEventCall, CALL_STATUS } from '@resources/ats/_event-call';
 
@@ -48,6 +48,7 @@ export const MainScreen = connect(mapStateToProps)((props: BottomTabNavigationPr
     React.useEffect(() => {
         // Показать окно с ОК
         if (props.status.isPermissions && props.status.isWiFi && props.status.isEnabled && isManual) {
+            setIsManual(false)
             setModalShow(true);
         }
     }, [props.status]);
@@ -85,10 +86,26 @@ export const MainScreen = connect(mapStateToProps)((props: BottomTabNavigationPr
                                 }}
                             />
                         </ListItem>
-                        <ListItem label="Подключение к WI-FI" onPress={() => {}}>
+                        <ListItem
+                            label="Подключение к WI-FI"
+                            onPress={() => {
+                                if (props.status.isWiFi) {
+                                    Alert.alert('Статус', 'Вы подключены к WI-FI');
+                                } else {
+                                    Alert.alert('Статус', 'Подключитесь к WI-FI точке');
+                                }
+                            }}>
                             <BadgeStatus isActive={props.status.isWiFi} />
                         </ListItem>
-                        <ListItem label="Разрешение на чтение телефонных вызовов" onPress={() => {}}>
+                        <ListItem
+                            label="Разрешение на чтение телефонных вызовов"
+                            onPress={() => {
+                                if (props.status.isPermissions) {
+                                    Alert.alert('Статус', 'У приложения уже есть разрешения');
+                                } else {
+                                    dispatch(permissionsRequest());
+                                }
+                            }}>
                             <BadgeStatus isActive={props.status.isPermissions} />
                         </ListItem>
                         <Button

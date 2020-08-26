@@ -19,11 +19,5 @@ export interface State {
 
 export const initialState: State = {
     status: { ...initialStatus },
-    calls: [
-        {
-            ...initialEventCall,
-            status: CALL_STATUS.INCOMING,
-            phone: '+79142283763',
-        },
-    ],
+    calls: [],
 };

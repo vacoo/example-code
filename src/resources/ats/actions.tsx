@@ -36,3 +36,10 @@ export function eventCallSend(playload: EventCallSend): Action & EventCallSend {
         ...playload,
     };
 }
+
+// Запросить разрешение
+export function permissionsRequest(): Action {
+    return {
+        type: Const.ATS_PERMISSIONS_REQUEST,
+    };
+}
