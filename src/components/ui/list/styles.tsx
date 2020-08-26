@@ -4,10 +4,11 @@ import * as COLORS from '@components/ui/colors';
 
 export default StyleSheet.create<{ [key: string]: ViewStyle | TextStyle | ImageStyle }>({
     container: {
-        backgroundColor: '#FFF',
+       
     },
     item_container: {
         paddingHorizontal: 10,
+        backgroundColor: '#FFF',
     },
     is_last: {
         borderBottomWidth: 0,
@@ -17,7 +18,10 @@ export default StyleSheet.create<{ [key: string]: ViewStyle | TextStyle | ImageS
         borderColor: COLORS.COLOR_ITEM_BORDER,
         paddingVertical: 15,
     },
-    col_label: {},
+    col_label: {
+        alignItems: 'center',
+        flexDirection: 'row',
+    },
     col_component: {
         alignItems: 'center',
         flexDirection: 'row',
@@ -26,8 +30,11 @@ export default StyleSheet.create<{ [key: string]: ViewStyle | TextStyle | ImageS
     icon: {
         paddingLeft: 5,
     },
+    icon_left: {
+        paddingRight: 8,
+    },
     text: {
-        fontSize: 13,
+        fontSize: 14,
         color: COLORS.COLOR_TEXT_MUTED,
         textAlign: 'right',
     },
@@ -42,10 +49,9 @@ export default StyleSheet.create<{ [key: string]: ViewStyle | TextStyle | ImageS
     help: {
         paddingVertical: 20,
         paddingHorizontal: 15,
-        alignItems: 'center',
     },
     help_text: {
-        fontSize: 12,
+        fontSize: 14,
         color: COLORS.COLOR_TEXT_MUTED,
     },
 });

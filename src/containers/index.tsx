@@ -35,11 +35,10 @@ export const MainStacks = connect(mapStateToProps)((props: Props) => {
                 <Stack.Navigator
                     screenOptions={{
                         title: 'Заказы',
-                        headerShown: false,
                         headerTitleStyle: stackNavigatorHeaderTitleStyle,
                     }}
                     mode="card">
-                    <Stack.Screen name="Main" component={MainScreen} />
+                    <Stack.Screen name="Main" component={MainScreen} options={{ headerShown: false }} />
                     <Stack.Screen
                         name="Help"
                         component={HelpScreen}

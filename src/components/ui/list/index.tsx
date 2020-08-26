@@ -23,6 +23,7 @@ type ItemProps = {
     isArrowNext?: boolean;
     labelStyle?: TextStyle;
     icon?: React.ReactChild | React.ReactChild[];
+    iconLeft?: React.ReactChild | React.ReactChild[];
 };
 
 export const ListItem = (props: ItemProps) => {
@@ -30,6 +31,7 @@ export const ListItem = (props: ItemProps) => {
         <TouchableOpacity activeOpacity={props.onPress ? 0.6 : 1} onPress={props.onPress} style={styles.item_container}>
             <GridRow style={[styles.item, props.isLast && styles.is_last]}>
                 <GridColumn size={props.children ? 60 : 90} style={styles.col_label}>
+                    {props.iconLeft ? <View style={styles.icon_left}>{props.iconLeft}</View> : <React.Fragment />}
                     <Text style={[styles.label, props.labelStyle]}>{props.label}</Text>
                     {props.desc ? <Text style={styles.desc}>{props.desc}</Text> : <React.Fragment />}
                 </GridColumn>

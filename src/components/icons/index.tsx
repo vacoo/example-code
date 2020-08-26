@@ -13,3 +13,5 @@ export { SvgWhatsapp } from './whatsapp';
 export { SvgCancelBold } from './cancelbold';
 export { SvgLoading } from './loading';
 export { SvgError } from './error';
+export { SvgHelp } from './help';
+export { SvgCheck } from './check';

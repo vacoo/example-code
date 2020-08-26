@@ -103,7 +103,7 @@ export const AuthSignInScreen = connect(mapStateToProps)((props: StackNavigation
                     <Button
                         type={BUTTON_TYPE.LINK_GHOST}
                         onPress={() => {
-                            Linking.openURL('https://vodopad.org/auth/forgot');
+                            Linking.openURL('https://crm.vodopad.org/auth/forgot');
                         }}>
                         Забыли пароль?
                     </Button>
