@@ -175,6 +175,8 @@ function* checkPermissions() {
 function* permissionsRequest() {
     yield PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_PHONE_STATE);
     yield PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_CALL_LOG);
+
+    yield checkPermissions();
 }
 
 // Отправка события звонка

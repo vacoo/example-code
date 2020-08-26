@@ -42,7 +42,7 @@ export default class Root extends React.Component {
                     <NavigationContainer>
                         <MainStacks />
                     </NavigationContainer>
-                    <FlashMessage position="bottom" animationDuration={150} />
+                    <FlashMessage position='top' animationDuration={150} />
                 </SafeAreaProvider>
             </Provider>
         );

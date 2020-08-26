@@ -1,4 +1,4 @@
-import { call, put, takeEvery, select, all } from 'redux-saga/effects';
+import { call, put, takeEvery, all } from 'redux-saga/effects';
 import { Action } from 'redux';
 import AsyncStorage from '@react-native-community/async-storage';
 import OneSignal from 'react-native-onesignal';
@@ -10,7 +10,6 @@ import * as Request from '@resources/utils/request';
 import * as Toast from '@resources/utils/toast';
 import { User, USER_ROLE } from '@resources/users/_user';
 import { Options } from '@resources/users/_options';
-import { getPush } from '@resources/users/selectors';
 import { setTimezone } from '@resources/utils/time';
 
 // Отправка смс кода
@@ -57,8 +56,6 @@ function* authPhone(action: Action & Actions.AuthPhoneFetch) {
         yield put(success);
 
         yield _setTimezone(success.user);
-
-        yield _setOneSignalData(success.user);
     } catch (e) {
         yield put({ type: Const.USERS_AUTH_PHONE_FAIL, e });
     }
@@ -83,7 +80,6 @@ function* authLogin(action: Actions.AuthLoginFetch & Action) {
         yield put(success);
 
         yield _setTimezone(success.user);
-        yield _setOneSignalData(success.user);
     } catch (e) {
         yield put({ type: Const.USERS_AUTH_LOGIN_FAIL, e });
     }
@@ -120,7 +116,6 @@ export function* _reqProfileGet() {
 
     yield _setTimezone(success.user);
     yield _saveProfileID(success.user.id, success.user.role);
-    yield _setOneSignalData(success.user);
 }
 function* profile() {
     try {
@@ -207,21 +202,6 @@ export function* _saveToken(access_token: string) {
     }
 }
 
-// Установка тегов в OneSignal
-function* _setOneSignalData(user: User) {
-    let push: boolean = yield select(getPush);
-
-    let tags: { [key: string]: any } = {
-        user_id: user.id,
-        role: user.role,
-        supplier_id: user.supplier_id,
-        city_id: user.city_id,
-    };
-
-    OneSignal.sendTags(tags);
-    OneSignal.setSubscription(push);
-}
-
 // Сохранение ID профиля из хранилища
 function* _saveProfileID(id: number, role: USER_ROLE) {
     try {
@@ -255,19 +235,8 @@ function* _restoreLocalData() {
                 push: push,
             }),
         );
-        yield put(Actions.pushSet({ push }));
     } catch (e) {
         throw new Request.RequestError('Ошибка при восстановлении локальных данных');
-    }
-}
-
-// Сохранение push настройки
-function* pushSet(action: Action & Actions.PushSet) {
-    try {
-        OneSignal.setSubscription(action.push);
-        yield AsyncStorage.setItem('push', action.push ? '1' : '0');
-    } catch (e) {
-        throw new Request.RequestError('Ошибка при сохранении push настройки');
     }
 }
 
@@ -282,7 +251,6 @@ export function* apiUsers() {
     yield takeEvery(Const.USERS_PROFILE_FETCH, profile);
     yield takeEvery(Const.USERS_REVOKE_FETCH, revoke);
     yield takeEvery(Const.USERS_OPTIONS_FETCH, settings);
-    yield takeEvery(Const.USERS_PUSH_SET, pushSet);
     yield takeEvery(Const.USERS_USER_UPDATE_FETCH, userUpdate);
 
     yield all([put(Actions.options()), put(Actions.profile())]);
