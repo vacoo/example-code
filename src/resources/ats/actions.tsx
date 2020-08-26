@@ -2,7 +2,6 @@ import { Action } from 'redux';
 
 import * as Const from '@resources/ats/constants';
 import { Status } from '@resources/ats/_state';
-import { EventCall } from '@resources/ats/_event-call';
 
 // Включить/выключить
 export interface Toogle {
@@ -26,14 +25,10 @@ export function statusSet(playload: StatusSet): Action & StatusSet {
     };
 }
 
-// Отправить событие
-export interface EventCallSend {
-    eventCall: EventCall;
-}
-export function eventCallSend(playload: EventCallSend): Action & EventCallSend {
+// Отправить тестовое событие
+export function eventCallTestSend(): Action {
     return {
-        type: Const.ATS_EVENT_CALL_SEND,
-        ...playload,
+        type: Const.ATS_EVENT_CALL_TEST_SEND,
     };
 }
 

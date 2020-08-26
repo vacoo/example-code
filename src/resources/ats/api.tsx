@@ -178,15 +178,26 @@ function* permissionsRequest() {
 }
 
 // Отправка события звонка
-function* eventCallSend(action: Action & Actions.EventCallSend) {
+function* eventCallSend(action: Action) {
     try {
-        let res = yield call(Request.post, '/v1/event-call', {
-            status: action.eventCall.status,
-            phone: action.eventCall.phone,
+        const phone = '+79141111111';
+
+        yield call(Request.post, '/v1/event-call', {
+            status: CALL_STATUS.INCOMING,
+            phone: phone,
         });
+
+        Toast.showInfo('Событие отправлено', 'Сейчас через 3 сек откроется карточка');
+        yield delay(1000);
+
+        let res = yield call(Request.post, '/v1/event-call', {
+            status: CALL_STATUS.OFFHOOK,
+            phone: phone,
+        });
+
         Toast.showSuccess('Ответ от сервера', res.msg);
     } catch (e) {
-        Toast.showError('Не удалось отправть', e.message);
+        Toast.showError('Не удалось отправить событие', e.message);
     }
 }
 
@@ -196,6 +207,6 @@ export function* apiAts() {
     yield fork(checkPermissions);
 
     yield takeEvery(Const.ATS_TOOGLE, toogle);
-    yield takeEvery(Const.ATS_EVENT_CALL_SEND, eventCallSend);
+    yield takeEvery(Const.ATS_EVENT_CALL_TEST_SEND, eventCallSend);
     yield takeEvery(Const.ATS_PERMISSIONS_REQUEST, permissionsRequest);
 }

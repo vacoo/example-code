@@ -55,14 +55,18 @@ export const HelpScreen = connect(mapStateToProps)((props: BottomTabNavigationPr
                     Для корректной передачи события нужно подключится к WI-FI точке и предоставить разрешения на чтение
                     телефонных вызовов
                 </Text>
+                <Text style={{ marginBottom: 10 }}>
+                    У некоторых Android устройств может быть включен режим энергосбережения. Отключите его зайдя в
+                    настройки телефона.
+                </Text>
                 <Text style={{ marginBottom: 10 }}>Если вы у вас возникли сложности напишите в техподдержку</Text>
             </Box>
             <ListItem
                 label="Веб-сайт"
                 onPress={() => {
-                    Linking.openURL('https://vodopad.org');
+                    Linking.openURL('https://crm.vodopad.org');
                 }}>
-                <ListItemText>vodopad.org</ListItemText>
+                <ListItemText>crm.vodopad.org</ListItemText>
             </ListItem>
             <ListItem
                 label="Техподдержка (whatsapp)"
