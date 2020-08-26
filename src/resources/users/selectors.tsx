@@ -17,9 +17,6 @@ export const getProfileID = (state: GlobalState): number => state.users.profile.
 // Роль профиля
 export const getProfileRole = (state: GlobalState): USER_ROLE => state.users.profile.role;
 
-// Тип входа
-export const getLoginType = (state: GlobalState): LOGIN_TYPE => state.users.loginType;
-
 // Авторизован
 export const getIsAuth = (state: GlobalState): boolean => state.users.isAuth;
 
@@ -34,9 +31,6 @@ export const getIsSmsCodeSended = (state: GlobalState): boolean => state.users.i
 
 // Настройки
 export const getOptions = (state: GlobalState): Options => state.users.options;
-
-// Push
-export const getPush = (state: GlobalState): boolean => state.users.push;
 
 // Имя профиля
 export const getProfileName = (state: GlobalState): string => state.users.profile.name;

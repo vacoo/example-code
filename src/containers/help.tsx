@@ -12,7 +12,7 @@ import { ListItem, ListItemText } from '@components/ui/list';
 
 import { GlobalState } from '@resources/reducers';
 import { BottomTabNavigationProps } from '@resources/navigation-props';
-import { toWhatsApp, formatPhone } from '@resources/utils';
+import { toWhatsApp } from '@resources/utils';
 import { Options } from '@resources/users/_options';
 import { getOptions } from '@resources/users/selectors';
 import { authLogout } from '@resources/users/actions';

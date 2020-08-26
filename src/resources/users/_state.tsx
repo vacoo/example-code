@@ -8,9 +8,7 @@ export enum LOGIN_TYPE {
 
 export interface State {
     profile: User;
-    push: boolean;
     options: Options;
-    loginType: LOGIN_TYPE;
 
     login: string; // Логин
     waitToAt: number; // Время до разблокироваки отправки смс кода
@@ -20,9 +18,7 @@ export interface State {
 
 export const initialState: State = {
     profile: { ...initialUser, id: 1, role: USER_ROLE.DRIVER },
-    push: true,
     options: { ...initialOptions },
-    loginType: LOGIN_TYPE.EMAIL,
 
     login: '',
     waitToAt: 0,

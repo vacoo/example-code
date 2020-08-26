@@ -3,9 +3,6 @@ import { Alert } from 'react-native';
 import { connect, useDispatch } from 'react-redux';
 
 import { Wrapper } from '@components/wrapper';
-
-import { GlobalState } from '@resources/reducers';
-import { BottomTabNavigationProps } from '@resources/navigation-props';
 import { Button, BUTTON_TYPE } from '@components/ui/button';
 import { Box } from '@components/ui/box';
 import { Header } from '@components/header';
@@ -13,6 +10,9 @@ import { ListItem } from '@components/ui/list';
 import { Switch } from '@components/ui/switch';
 import { BadgeStatus } from '@components/ui/badge-status';
 import { ModalOK } from '@components/modal-ok';
+
+import { GlobalState } from '@resources/reducers';
+import { BottomTabNavigationProps } from '@resources/navigation-props';
 import { getStatus } from '@resources/ats/selectors';
 import { toogle, eventCallTestSend, permissionsRequest } from '@resources/ats/actions';
 import { Status } from '@resources/ats/_state';

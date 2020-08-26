@@ -36,18 +36,6 @@ export const USERS_OPTIONS_FAIL = 'USERS_OPTIONS_FAIL';
 // Восстановление ID профиля из хранилища
 export const USERS_LOCAL_DATA_SET = 'USERS_LOCAL_DATA_SET';
 
-// Изменить тип входа
-export const USERS_LOGIN_TYPE_SET = 'USERS_LOGIN_TYPE_SET';
-
-// Сохранение push настройки
-export const USERS_PUSH_SET = 'USERS_PUSH_SET';
-
-// Включить телефонию
-export const USERS_ATS_ENABLE = 'USERS_ATS_ENABLE';
-
-// Выключить телефонию
-export const USERS_ATS_DISABLE = 'USERS_ATS_DISABLE';
-
 // Обновление профиля
 export const USERS_USER_UPDATE_FETCH = 'USERS_USER_UPDATE_FETCH';
 export const USERS_USER_UPDATE_SUCCESS = 'USERS_USER_UPDATE_SUCCESS';

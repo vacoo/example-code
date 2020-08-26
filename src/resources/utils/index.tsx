@@ -1,8 +1,6 @@
-import { Platform, PermissionsAndroid, Linking } from 'react-native';
+import { Platform, Linking } from 'react-native';
 import { Image } from 'react-native-image-crop-picker';
 const packageJSON = require('@root/package.json');
-
-import { FileInDevice, initialFile } from '@resources/ui/_file-link';
 
 // Меняет состояние загрузки
 export function loading<T>(
@@ -445,33 +443,6 @@ export function sliceStr(source: string, max: number = 30): string {
         str = str + '...';
     }
     return str;
-}
-
-// Конвертация структуры файлов
-export function convertToFileInDevice(image: Image | Image[]): Array<FileInDevice> {
-    let files: Array<FileInDevice> = [];
-
-    if (image instanceof Array) {
-        files = image.map((im) => {
-            return {
-                ...initialFile,
-                uri: im.path,
-                type: im.mime,
-                name: im.filename,
-            };
-        });
-    } else {
-        files = [
-            {
-                ...initialFile,
-                uri: image.path,
-                type: image.mime,
-                name: image.filename,
-            },
-        ];
-    }
-
-    return files;
 }
 
 // Первая буква с заглавной

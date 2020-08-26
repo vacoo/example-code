@@ -10,8 +10,6 @@ import { Button, BUTTON_TYPE } from '@components/ui/button';
 import { TermsLink } from '@components/terms-link';
 import { Overlay } from '@components/ui/overlay';
 
-import { LOGIN_TYPE } from '@resources/users/_state';
-import { getLoginType, getIsSmsCodeSended, getWaitToAt } from '@resources/users/selectors';
 import { GlobalState } from '@resources/reducers';
 import { StackNavigationProps } from '@resources/navigation-props';
 import { options, authLogin } from '@resources/users/actions';
@@ -20,18 +18,12 @@ import { getUsersReq } from '@resources/ui/selectors';
 import { validateEmail } from '@resources/utils';
 
 type Props = {
-    loginType: LOGIN_TYPE;
-    isSmsCodeSended: boolean;
     usersReq: UsersReq;
-    waitToAt: number;
 };
 
 const mapStateToProps = (state: GlobalState): Props => {
     return {
-        loginType: getLoginType(state),
-        isSmsCodeSended: getIsSmsCodeSended(state),
         usersReq: getUsersReq(state),
-        waitToAt: getWaitToAt(state),
     };
 };
 

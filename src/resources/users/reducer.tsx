@@ -65,38 +65,10 @@ function optionsSuccess(state: State, action: Api.OptionsSuccess): State {
 function localDataSet(state: State, action: Actions.LocalDataSet): State {
     return {
         ...state,
-        push: action.push,
         profile: {
             ...state.profile,
             id: action.profile_id,
             role: action.role,
-        },
-    };
-}
-
-// Изменить тип входа
-function loginTypeSet(state: State, action: Actions.LoginTypeSet): State {
-    return {
-        ...state,
-        loginType: action.loginType,
-    };
-}
-
-// Сохранение push настройки
-function pushSet(state: State, action: Actions.PushSet): State {
-    return {
-        ...state,
-        push: action.push,
-    };
-}
-
-// Прочитать все
-function noticesReaded(state: State): State {
-    return {
-        ...state,
-        profile: {
-            ...state.profile,
-            unreaded_count: 0,
         },
     };
 }
@@ -133,12 +105,6 @@ export const reducerUsers = (state: State = initialState, action: any) => {
 
         case Const.USERS_LOCAL_DATA_SET:
             return localDataSet(state, action);
-
-        case Const.USERS_LOGIN_TYPE_SET:
-            return loginTypeSet(state, action);
-
-        case Const.USERS_PUSH_SET:
-            return pushSet(state, action);
 
         case Const.USERS_USER_UPDATE_SUCCESS:
             return userUpdate(state, action);

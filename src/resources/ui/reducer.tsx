@@ -1,25 +1,4 @@
-import { Action } from 'redux';
-import * as Const from '@resources/ui/constants';
 import { State, initialState } from '@resources/ui/_state';
-import { MenuContextOpen } from '@resources/ui/actions';
-import { Alert } from 'react-native';
-
-// Открыть меню
-function menuContextOpen(state: State, action: Action & MenuContextOpen): State {
-    return {
-        ...state,
-        menuContext: action.menuContext,
-        menuContextShow: true,
-    };
-}
-
-// Закрыть меню
-function menuContextClose(state: State, action: Action): State {
-    return {
-        ...state,
-        menuContextShow: false,
-    };
-}
 
 const P_FETCH = /FETCH/g;
 const P_SUCCESS = /SUCCESS/g;
@@ -65,12 +44,5 @@ export const reducerUI = (state: State = initialState, action: any): State => {
         return loading(state, getNamespace(type), getName(type), false);
     }
 
-    switch (action.type) {
-        case Const.UI_MENU_CONTEXT_OPEN:
-            return menuContextOpen(state, action);
-        case Const.UI_MENU_CONTEXT_CLOSE:
-            return menuContextClose(state, action);
-        default:
-            return state;
-    }
+    return state;
 };

@@ -80,42 +80,6 @@ export function options(): Action {
     };
 }
 
-// Изменить тип входа
-export interface LoginTypeSet {
-    loginType: LOGIN_TYPE;
-}
-export function loginTypeSet(playload: LoginTypeSet): Action & LoginTypeSet {
-    return {
-        type: Const.USERS_LOGIN_TYPE_SET,
-        ...playload,
-    };
-}
-
-// Сохранение push настройки
-export interface PushSet {
-    push: boolean;
-}
-export function pushSet(playload: PushSet): Action & PushSet {
-    return {
-        type: Const.USERS_PUSH_SET,
-        ...playload,
-    };
-}
-
-// Включить телефонию
-export function atsEnable(): Action {
-    return {
-        type: Const.USERS_ATS_ENABLE,
-    };
-}
-
-// Выключить телефонию
-export function atsDisable(): Action {
-    return {
-        type: Const.USERS_ATS_DISABLE,
-    };
-}
-
 // Обновление профиля
 export interface UserUpdateFetch {
     user: User;
@@ -125,10 +89,4 @@ export function userUpdate(playload: UserUpdateFetch): Action & UserUpdateFetch 
         type: Const.USERS_USER_UPDATE_FETCH,
         ...playload,
     };
-}
-
-export function serviceStart(): Action {
-    return {
-        type: Const.USERS_SERVICE_START
-    }
 }

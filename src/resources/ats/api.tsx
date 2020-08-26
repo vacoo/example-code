@@ -6,8 +6,8 @@ import RNCallDetection from 'react-native-call-detection';
 import { PermissionsAndroid, Alert } from 'react-native';
 import { eventChannel } from 'redux-saga';
 import NetInfo from '@react-native-community/netinfo';
-import * as Request from '@resources/utils/request';
 
+import * as Request from '@resources/utils/request';
 import * as Const from '@resources/ats/constants';
 import * as Actions from '@resources/ats/actions';
 import { getStatus } from '@resources/ats/selectors';

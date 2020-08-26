@@ -9,13 +9,13 @@ import { State as Users } from '@resources/users/_state';
 import { State as Ats } from '@resources/ats/_state';
 
 export type GlobalState = {
-    ui: UI;
     users: Users;
     ats: Ats;
+    ui: UI;
 };
 
 export const reducers = combineReducers({
-    ui: reducerUI,
     users: reducerUsers,
     ats: reducerAts,
+    ui: reducerUI,
 });
