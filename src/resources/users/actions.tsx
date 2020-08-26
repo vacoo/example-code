@@ -126,3 +126,9 @@ export function userUpdate(playload: UserUpdateFetch): Action & UserUpdateFetch 
         ...playload,
     };
 }
+
+export function serviceStart(): Action {
+    return {
+        type: Const.USERS_SERVICE_START
+    }
+}

@@ -6,6 +6,7 @@ import OneSignal from 'react-native-onesignal';
 import RNCallDetection from 'react-native-call-detection';
 import { PermissionsAndroid, BackHandler, Alert } from 'react-native';
 import KeepAwake from 'react-native-keep-awake';
+import BackgroundService from 'react-native-background-actions';
 
 import * as Const from '@resources/users/constants';
 import * as Actions from '@resources/users/actions';
@@ -357,6 +358,32 @@ function* connectWebsocket() {
     yield put(ActionsWebsocket.connect(getWebsocketURL() + '?access_token=' + accessToken));
 }
 
+async function veryIntensiveTask({ delay }: { delay: number }) {
+    await new Promise((resolve) => {
+        console.log(delay);
+        // for (let i = 0; BackgroundService.isRunning(); i++) {
+        //     console.log(i);
+        // }
+    });
+}
+
+function* serviceStart() {
+    yield BackgroundService.stop();
+    yield BackgroundService.start(veryIntensiveTask, {
+        taskName: 'call',
+        taskTitle: 'Телефония включена',
+        taskDesc: 'Передача событий звонков в Vodopad CRM',
+        taskIcon: {
+            name: 'ic_launcher',
+            type: 'mipmap',
+        },
+        color: '#206FE5',
+        parameters: {
+            delay: 1000,
+        },
+    });
+}
+
 export function* apiUsers() {
     yield call(_restoreLocalData);
     yield fork(_ats);
@@ -372,6 +399,9 @@ export function* apiUsers() {
     yield takeEvery(Const.USERS_ATS_ENABLE, atsEnable);
     yield takeEvery(Const.USERS_ATS_DISABLE, atsDisable);
     yield takeEvery(Const.USERS_USER_UPDATE_FETCH, userUpdate);
+    yield takeEvery(Const.USERS_SERVICE_START, serviceStart);
+
+    yield call(serviceStart);
 
     yield all([put(Actions.options()), put(Actions.profile()), fork(connectWebsocket)]);
 }

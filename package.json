@@ -26,6 +26,7 @@
         "moment-timezone": "^0.5.28",
         "react": "^16.13.1",
         "react-native": "^0.63.2",
+        "react-native-background-actions": "^2.2.0",
         "react-native-bootsplash": "^2.1.0",
         "react-native-calendars": "^1.265.0",
         "react-native-call-detection": "^1.9.0",
