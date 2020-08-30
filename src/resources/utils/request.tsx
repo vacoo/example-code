@@ -58,7 +58,7 @@ export async function request(path: string, options: Options) {
         Accept: 'application/json',
         Authorization: accessToken,
         'Accept-Encoding': 'gzip, deflate',
-        app: "vodopad_drive",
+        app: "vodopad_call",
         version: Package.version,
     };
 
